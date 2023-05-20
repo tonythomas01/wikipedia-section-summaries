@@ -94,6 +94,7 @@ function getH2Sections(articleElement, minChars) {
         if (length >= minChars) {
             h2Sections.push({
                 title: title,
+                contentElements: contentElements,
                 contentHtml: contentHtml,
                 contentPlain: contentPlain,
                 length: length,
