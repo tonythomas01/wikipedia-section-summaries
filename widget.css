@@ -1,0 +1,54 @@
+.section-summary-widget {
+    margin-bottom: 0.8em;
+}
+
+.section-summary-widget.collapsed .section-summary-widget__collapsed,
+.section-summary-widget.loading .section-summary-widget__loading,
+.section-summary-widget.completed .section-summary-widget__completed,
+.section-summary-widget.error .section-summary-widget__error {
+    display: block;
+}
+
+.section-summary-widget__loading {
+    font-style: italic;
+}
+
+.section-summary-widget__error,
+.section-summary-widget__collapsed,
+.section-summary-widget__loading {
+    display: none;
+    padding: 0.8em 1.6em;
+    border-bottom: 1px solid #eaecf0;
+}
+
+
+.vector-body .section-summary-widget__error,
+.vector-body .section-summary-widget__collapsed,
+.vector-body .section-summary-widget__loading {
+    padding-left: 0;
+    padding-right: 0;
+    border-bottom-color: #a2a9b1;
+}
+
+
+.section-summary-widget__completed {
+    display: none;
+    background: #eaecf0;
+    padding: 0.8em 1.6em;
+}
+
+.section-summary-widget__disclaimer {
+    margin-top: 5px;
+    font-size: 11px;
+    line-height: 15px;
+    opacity: 0.65;
+}
+
+.content .mw-parser-output > h2, .content .section-heading {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+}
+
+.vector-body h2 {
+    margin-bottom: 0;
+}
