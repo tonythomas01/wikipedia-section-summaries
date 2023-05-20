@@ -1,0 +1,20 @@
+mw.loader.using(["oojs-ui-core", "oojs-ui.styles.icons-content"]).done(function () {
+    mw.loader.getScript('https://unpkg.com/turndown@7.1.2/dist/turndown.js')
+        .then(
+            function () {
+                mw.loader.getScript('https://en.summarium.net/mediawiki-summarizer/sectionFinder.js?' + Date.now())
+                    .then(
+                        function() {
+                            mw.loader.getScript('https://en.summarium.net/mediawiki-summarizer/widget.js?' + Date.now());
+                        },
+                        function (e) {
+                            mw.log.error(e.message); // => "Failed to load script"
+                        }
+                    );
+            },
+            function (e) {
+                mw.log.error(e.message); // => "Failed to load script"
+            }
+        );
+    mw.loader.load('https://en.summarium.net/mediawiki-summarizer/widget.css?' + Date.now(), 'text/css');
+});

@@ -28,7 +28,7 @@ function getPlainTextFromHtml(html) {
     temp.innerHTML = html;
 
     // Remove content of <style>, <script>, and other similar elements
-    var elementsToRemove = temp.querySelectorAll('style, script, noscript, iframe, object, embed');
+    var elementsToRemove = temp.querySelectorAll('style, script, noscript, iframe, object, embed, span.mw-editsection, img');
     Array.prototype.forEach.call(elementsToRemove, function (element) {
         element.parentNode.removeChild(element);
     });

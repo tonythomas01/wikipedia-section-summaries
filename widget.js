@@ -6,20 +6,18 @@ function initializeSectionSummarizer() {
     if (summarizerSections.length === 0) {
         console.error('Section Summarizer could not find suitable sections');
     } else {
-        injectSummaryWidgets(summarizerSections, 2000);
+        injectSummaryWidgets(summarizerSections, 300);
     }
 }
 
-function injectSummaryWidgets(sections, minChars = 500) {
+function injectSummaryWidgets(sections, minChars = 0) {
     sections.forEach(function (section, index) {
         if (section.contentPlainLength > minChars) {
             const widget = document.createElement('div');
-            widget.className = 'section-summary-widget collapsed';
+            widget.className = 'section-summary-widget';
 
             widget.innerHTML = [
-                '<div class="section-summary-widget__collapsed">',
-                '    <button>Summarize</button>',
-                '</div>',
+                '<div class="section-summary-widget__collapsed"></div>',
                 '<div class="section-summary-widget__loading">',
                 '    <div>Summarizing the section...</div>',
                 '</div>',
@@ -34,17 +32,27 @@ function injectSummaryWidgets(sections, minChars = 500) {
 
             section.firstContentElement.parentNode.insertBefore(widget, section.firstContentElement);
 
-            const collapsedLink = widget.querySelector('.section-summary-widget__collapsed button');
-            collapsedLink.addEventListener('click', function (event) {
-                event.preventDefault();
+            const collapsedSection = widget.querySelector('.section-summary-widget__collapsed');
+
+            const summarizeButton = new OO.ui.ButtonWidget({
+                label: 'Summarize',
+                title: 'Click to summarize the section',
+                icon: 'robot',
+            });
+            summarizeButton.on('click', function () {
                 widget.classList.remove('collapsed');
                 widget.classList.add('loading');
 
-                summarizeSection(section).then(function (summary) {
-                    var summaryDiv = widget.querySelector('.section-summary-widget__summary');
-                    summaryDiv.textContent = summary;
+                const summaryDiv = widget.querySelector('.section-summary-widget__summary');
+
+                const updateSummary = (newSummary) => {
+                    summaryDiv.textContent = newSummary;
                     widget.classList.remove('loading');
                     widget.classList.add('completed');
+                };
+
+                summarizeSection(section, updateSummary).then(function (summary) {
+                    // This part is not needed anymore since we update the summary in the updateSummary function
                 }).catch(function (error) {
                     var errorDiv = widget.querySelector('.section-summary-widget__error');
                     errorDiv.textContent = 'Error: ' + error;
@@ -52,11 +60,17 @@ function injectSummaryWidgets(sections, minChars = 500) {
                     widget.classList.add('error');
                 });
             });
+
+            // Append button to collapsedSection
+            $(collapsedSection).append(summarizeButton.$element);
+
+            widget.classList.add('collapsed');
+
         }
     });
 }
 
-function summarizeSection(section) {
+function summarizeSection(section, updateSummary) {
     return new Promise(function (resolve, reject) {
         const openAiKey = getOpenAiKey();
         if (!openAiKey) {
@@ -64,9 +78,9 @@ function summarizeSection(section) {
             return;
         }
 
-        const sectionContent = "## " + section.title + "\n\n" + section.contentPlain;
+        const sectionContent = "## " + section.title + "\n\n" + section.contentMarkdown;
 
-        fetchSummaryUsingOpenAPI(openAiKey, sectionContent, function (error, summary) {
+        fetchSummaryUsingOpenAPI(openAiKey, sectionContent, updateSummary, function (error, summary) {
             if (error) {
                 reject(error);
             } else {
@@ -76,34 +90,71 @@ function summarizeSection(section) {
     });
 }
 
+async function fetchSummaryUsingOpenAPI(openAPIKey, sectionText, updateSummary, callback) {
+    const prompt = "Summarize the following section after ------------ in 30 words: \n\n------------ \n\n" + sectionText;
 
-function fetchSummaryUsingOpenAPI(openAPIKey, sectionText, callback) {
-    const fixedPromptForChatGPT = "Summarize the following section in 30 words: \n\n";
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "https://api.openai.com/v1/chat/completions", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.setRequestHeader("Authorization", "Bearer " + openAPIKey);
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                var response = JSON.parse(xhr.responseText);
-                const responseContent = response.choices[0].message.content;
-                callback(null, responseContent);
-            } else {
-                callback(xhr.statusText);
+    console.log('prompt', prompt)
+
+    try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${openAPIKey}`,
+            },
+            body: JSON.stringify({
+                model: "gpt-4",
+                messages: [
+                    {
+                        role: "user",
+                        content: prompt,
+                    }
+                ],
+                stream: true,
+                temperature: 0
+            }),
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let summary = "";
+
+        let buffer = "";
+        while (true) {
+            const {done, value} = await reader.read();
+            if (done) {
+                break;
             }
+
+            buffer += decoder.decode(value, {stream: true});
+            let start = 0;
+            let end = buffer.indexOf("\n");
+
+            while (end !== -1) {
+                const line = buffer.slice(start, end).replace(/^data: /, "").trim();
+                if (line !== "" && line !== "[DONE]") {
+                    const parsedLine = JSON.parse(line);
+                    const {choices} = parsedLine;
+                    const {delta} = choices[0];
+                    const {content} = delta;
+                    if (content) {
+                        summary += content;
+                        updateSummary(summary); // Update the summary content in the widget
+                    }
+                }
+
+                start = end + 1;
+                end = buffer.indexOf("\n", start);
+            }
+
+            buffer = buffer.slice(start);
         }
-    };
-    xhr.send(JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [
-            {
-                role: "user",
-                content: fixedPromptForChatGPT + sectionText,
-            }
-        ],
-        temperature: 0
-    }));
+
+        callback(null, summary);
+    } catch (error) {
+        console.error("Error:", error);
+        callback(error);
+    }
 }
 
 function getOpenAiKey() {
