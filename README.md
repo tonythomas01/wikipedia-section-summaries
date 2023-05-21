@@ -39,7 +39,7 @@ mw.loader.using(["oojs-ui-core", "oojs-ui.styles.icons-content"]).done(function 
 
 ## Usage
 
-The Mediawiki Summarizer will provide you with a summarized version of articles on Wikipedia or other Wikimedia sites. Look for an icon with a speech bubble located near the top-right corner of an article to access the summary.
+The Mediawiki Summarizer will provide you with a summarized sections on Wikipedia or other Wikimedia sites. Look for an icon with a robot located in each long section in an article or a talk page.
 
 ## Support
 
