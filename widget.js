@@ -189,20 +189,29 @@ function summarizeSection(section, updateSummary, sectionHeadingFromDOM) {
     var sectionContent = "";
     if (namespace === "Talk") {
       // Use @Tgrs solution to parse things from the API instead.
-      debugger
-      const sectionDataViaAPI = getSectionText(sectionHeadingFromDOM);
-      sectionContent = "## " + section.title + "\n\n" + sectionDataViaAPI;
+      getSectionText(sectionHeadingFromDOM).then(function (sectionText) {
+        console.log("Found Section Text:", sectionText);
+        sectionContent = "## " + section.title + "\n\n" + sectionText;
+        fetchSummaryUsingOpenAi(openAiKey, sectionContent, updateSummary, function (error, summary) {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(summary);
+          }
+        });
+      });
     } else {
       sectionContent = "## " + section.title + "\n\n" + section.contentPlain;
+      fetchSummaryUsingOpenAi(openAiKey, sectionContent, updateSummary, function (error, summary) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(summary);
+        }
+      });
     }
 
-    fetchSummaryUsingOpenAi(openAiKey, sectionContent, updateSummary, function (error, summary) {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(summary);
-      }
-    });
+
   });
 }
 
