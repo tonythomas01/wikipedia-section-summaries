@@ -19,7 +19,7 @@ mw.loader
         $.when(
           mw.loader.getScript('https://tonythomas01.github.io/wikipedia-section-summaries/sectionFinder.js', 'text/javascript'),
           mw.loader.getScript('https://tonythomas01.github.io/wikipedia-section-summaries/widget.js', 'text/javascript'),
-          mw.loader.load("https://tonythomas01.github.io/wikipedia-section-summaries/mediawiki-summarizer/widget.css?" + version, "text/css")
+          mw.loader.load("https://tonythomas01.github.io/wikipedia-section-summaries/widget.css", "text/css")
         ).then(
             function () {
                 initializeSectionSummarizer();
