@@ -12,26 +12,24 @@ To install the Mediawiki Summarizer tool, follow the instructions below:
 4. Copy and paste the following code snippet into the text editor on the common.js page:
 
 ```javascript
-mw.loader.using(["oojs-ui-core", "oojs-ui.styles.icons-content"]).done(function () {
-    mw.loader.getScript('https://unpkg.com/turndown@7.1.2/dist/turndown.js')
-        .then(
+mw.loader
+    .using(["oojs-ui-core", "oojs-ui.styles.icons-content"])
+    .done(function () {
+        var version = Date.now();
+        $.when(
+            mw.loader.getScript("https://unpkg.com/turndown@7.1.2/dist/turndown.js"),
+            mw.loader.getScript("https://en.summarium.net/mediawiki-summarizer/sectionFinder.js?" + version),
+            mw.loader.getScript("https://en.summarium.net/mediawiki-summarizer/widget.js?" + version),
+            mw.loader.load("https://en.summarium.net/mediawiki-summarizer/widget.css?" + version, "text/css")
+        ).then(
             function () {
-                mw.loader.getScript('https://en.summarium.net/mediawiki-summarizer/sectionFinder.js?' + Date.now())
-                    .then(
-                        function() {
-                            mw.loader.getScript('https://en.summarium.net/mediawiki-summarizer/widget.js?' + Date.now());
-                        },
-                        function (e) {
-                            mw.log.error(e.message); // => "Failed to load script"
-                        }
-                    );
+                initializeSectionSummarizer();
             },
             function (e) {
-                mw.log.error(e.message); // => "Failed to load script"
+                mw.log.error(e.message);
             }
         );
-    mw.loader.load('https://en.summarium.net/mediawiki-summarizer/widget.css?' + Date.now(), 'text/css');
-});
+    });
 ```
 
 5. Click "Save page" to save your changes.

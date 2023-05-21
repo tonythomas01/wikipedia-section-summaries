@@ -1,5 +1,3 @@
-initializeSectionSummarizer();
-
 function initializeSectionSummarizer() {
     const summarizerSections = getSections();
     window.summarizerSections = summarizerSections;
@@ -11,7 +9,7 @@ function initializeSectionSummarizer() {
 }
 
 function injectSummaryWidgets(sections, minChars = 0) {
-    sections.forEach(function (section, index) {
+    sections.forEach(function (section) {
         if (section.contentPlainLength > minChars) {
             const widget = document.createElement('div');
             widget.className = 'section-summary-widget';
@@ -38,6 +36,7 @@ function injectSummaryWidgets(sections, minChars = 0) {
                 label: 'Summarize',
                 title: 'Click to summarize the section',
                 icon: 'robot',
+                framed: false,
             });
             summarizeButton.on('click', function () {
                 widget.classList.remove('collapsed');
@@ -54,7 +53,7 @@ function injectSummaryWidgets(sections, minChars = 0) {
                 summarizeSection(section, updateSummary).then(function (summary) {
                     // This part is not needed anymore since we update the summary in the updateSummary function
                 }).catch(function (error) {
-                    var errorDiv = widget.querySelector('.section-summary-widget__error');
+                    const errorDiv = widget.querySelector('.section-summary-widget__error');
                     errorDiv.textContent = 'Error: ' + error;
                     widget.classList.remove('loading');
                     widget.classList.add('error');
@@ -78,9 +77,9 @@ function summarizeSection(section, updateSummary) {
             return;
         }
 
-        const sectionContent = "## " + section.title + "\n\n" + section.contentMarkdown;
+        const sectionContent = "## " + section.title + "\n\n" + section.contentPlain;
 
-        fetchSummaryUsingOpenAPI(openAiKey, sectionContent, updateSummary, function (error, summary) {
+        fetchSummaryUsingOpenAi(openAiKey, sectionContent, updateSummary, function (error, summary) {
             if (error) {
                 reject(error);
             } else {
@@ -90,7 +89,7 @@ function summarizeSection(section, updateSummary) {
     });
 }
 
-async function fetchSummaryUsingOpenAPI(openAPIKey, sectionText, updateSummary, callback) {
+async function fetchSummaryUsingOpenAi(openAiKey, sectionText, updateSummary, callback) {
     const prompt = "Summarize the following section after ------------ in 30 words: \n\n------------ \n\n" + sectionText;
 
     console.log('prompt', prompt)
@@ -100,7 +99,7 @@ async function fetchSummaryUsingOpenAPI(openAPIKey, sectionText, updateSummary, 
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${openAPIKey}`,
+                Authorization: `Bearer ${openAiKey}`,
             },
             body: JSON.stringify({
                 model: "gpt-3.5-turbo",
@@ -158,10 +157,10 @@ async function fetchSummaryUsingOpenAPI(openAPIKey, sectionText, updateSummary, 
 }
 
 function getOpenAiKey() {
-    var openAiKey = localStorage.getItem('openAiKey');
+    let openAiKey = localStorage.getItem('openAiKey');
 
     if (!openAiKey) {
-        var userInput = prompt('Please enter your OpenAI API key (it should start with "sk-"):');
+        const userInput = prompt('Please enter your OpenAI API key (it should start with "sk-"):');
 
         if (userInput && userInput.startsWith('sk-')) {
             openAiKey = userInput;
@@ -173,4 +172,9 @@ function getOpenAiKey() {
     }
 
     return openAiKey;
+}
+
+
+function openSettings() {
+
 }
