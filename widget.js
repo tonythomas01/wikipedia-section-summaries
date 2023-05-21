@@ -189,6 +189,7 @@ function summarizeSection(section, updateSummary, sectionHeadingFromDOM) {
     var sectionContent = "";
     if (namespace === "Talk") {
       // Use @Tgrs solution to parse things from the API instead.
+      debugger
       const sectionDataViaAPI = getSectionText(sectionHeadingFromDOM.closest('h2'));
       sectionContent = "## " + section.title + "\n\n" + sectionDataViaAPI;
     } else {
