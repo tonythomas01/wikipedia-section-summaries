@@ -6,7 +6,9 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  Experiment to use ChatGPT to summarize page sections.
+// @author       Aleksei
 // @author       tonythomas01
+// @author       Tgr
 // @license      GPL-3.0-or-later
 // @match        https://*.wikipedia.org/*
 // @icon         https://doc.wikimedia.org/oojs-ui/master/demos/dist/themes/wikimediaui/images/icons/robot.svg

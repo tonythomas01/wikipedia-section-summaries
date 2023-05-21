@@ -38,18 +38,9 @@ function getPlainTextFromHtml(html) {
     return plainText.trim();
 }
 
-function convertHtmlToMarkdown(html) {
-    const turndownService = new TurndownService();
-    turndownService.remove('style');
-    turndownService.remove('script');
-    return turndownService.turndown(html);
-}
-
 function formatSection(section) {
     section.contentPlain = getPlainTextFromHtml(section.contentHtml);
     section.contentPlainLength = section.contentPlain.length;
-    section.contentMarkdown = convertHtmlToMarkdown(section.contentHtml);
-
     return section;
 }
 

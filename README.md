@@ -17,7 +17,6 @@ mw.loader
     .done(function () {
         var version = Date.now();
         $.when(
-            mw.loader.getScript("https://unpkg.com/turndown@7.1.2/dist/turndown.js"),
             mw.loader.getScript("https://en.summarium.net/mediawiki-summarizer/sectionFinder.js?" + version),
             // mw.loader.getScript("https://en.summarium.net/mediawiki-summarizer/widget.js?" + version),
             mw.loader.load('https://cdn.jsdelivr.net/gh/tonythomas01/wikipedia-section-summaries@master/widget.js', 'text/javascript'),
