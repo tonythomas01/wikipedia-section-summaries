@@ -19,7 +19,6 @@ function getSections() {
     if (sections.length !== 0) {
         sections = sections.map(formatSection);
     }
-
     return sections;
 }
 
@@ -39,8 +38,14 @@ function getPlainTextFromHtml(html) {
 }
 
 function formatSection(section) {
-    section.contentPlain = getPlainTextFromHtml(section.contentHtml);
-    section.contentPlainLength = section.contentPlain.length;
+    const namespace = mw.config.get("wgCanonicalNamespace");
+    if (namespace === "Talk") {
+        // We do not store the data.
+        section.contentPlainLength = getPlainTextFromHtml(section.contentHtml).contentPlain.length;
+    } else {
+        section.contentPlain = getPlainTextFromHtml(section.contentHtml);
+        section.contentPlainLength = section.contentPlain.length;
+    }
     return section;
 }
 

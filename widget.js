@@ -46,7 +46,6 @@ function injectSummaryWidgets(sections, minChars = 0) {
       ].join('');
 
       section.firstContentElement.parentNode.insertBefore(widget, section.firstContentElement);
-
       const collapsedSection = widget.querySelector('.section-summary-widget__collapsed');
 
       const summarizeButton = new OO.ui.ButtonWidget({
@@ -80,9 +79,7 @@ function injectSummaryWidgets(sections, minChars = 0) {
 
       // Append button to collapsedSection
       $(collapsedSection).append(summarizeButton.$element);
-
       widget.classList.add('collapsed');
-
     }
   });
 }
@@ -192,14 +189,12 @@ function summarizeSection(section, updateSummary, sectionHeadingFromDOM) {
       return;
     }
     const namespace = mw.config.get("wgCanonicalNamespace");
-    var sectionContent = "";
     if (namespace === "Talk") {
       // Use @Tgrs solution to parse things from the API instead.
       getSectionText(sectionHeadingFromDOM).then(function (sectionText) {
-        sectionContent = "## " + section.title + "\n\n" + sectionText;
         const fixedPromptForChatGPT = "Summarize the following discussion section in less than 100 words. Username is followed by what they" +
           "wrote. Indentation is used to denote threaded replies. Use the usernames in the summary as well. \n";
-        fetchSummaryUsingOpenAi(fixedPromptForChatGPT, openAiKey, sectionContent, updateSummary, function (error, summary) {
+        fetchSummaryUsingOpenAi(fixedPromptForChatGPT, openAiKey, sectionText, updateSummary, function (error, summary) {
           if (error) {
             reject(error);
           } else {
@@ -208,7 +203,7 @@ function summarizeSection(section, updateSummary, sectionHeadingFromDOM) {
         });
       });
     } else {
-      sectionContent = "## " + section.title + "\n\n" + section.contentPlain;
+      var sectionContent = "## " + section.title + "\n\n" + section.contentPlain;
       const fixedPromptForChatGPT = "Summarize the following section in less than 50 words:  ";
       fetchSummaryUsingOpenAi(fixedPromptForChatGPT, openAiKey, sectionContent, updateSummary, function (error, summary) {
         if (error) {
@@ -218,8 +213,6 @@ function summarizeSection(section, updateSummary, sectionHeadingFromDOM) {
         }
       });
     }
-
-
   });
 }
 
@@ -227,7 +220,6 @@ async function fetchSummaryUsingOpenAi(fixedPromptForChatGPT, openAiKey, section
   const prompt = fixedPromptForChatGPT + sectionText;
 
   console.log('prompt', prompt)
-
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
