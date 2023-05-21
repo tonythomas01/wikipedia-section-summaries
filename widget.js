@@ -84,6 +84,7 @@ function injectSummaryWidgets(sections, minChars = 0) {
     }
   });
 }
+var discussionToolsInfo;
 
 function getSectionData($heading) {
   var dataPromise;
