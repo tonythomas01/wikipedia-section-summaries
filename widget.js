@@ -115,6 +115,9 @@ function getSectionData($heading) {
         author: reply.author,
         text: getCommentTextFromHtml(reply.html)
       });
+      for (var i = 0; i < reply.replies.length; i++) {
+        processReplies(reply.replies[i]);
+      }
     } else if (reply.type === 'heading') {
       sectionContent.push({
         type: 'heading',
