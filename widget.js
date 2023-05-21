@@ -53,9 +53,8 @@ function injectSummaryWidgets(sections, minChars = 0) {
         icon: 'robot',
         framed: false,
       });
-      summarizeButton.on('click', function (event) {
-        const sectionHeadingFromDOM = $(event.target);
-        debugger
+      summarizeButton.on('click', function () {
+        const sectionHeadingFromDOM = this.$element.parent().parent().prev('.mw-heading');
         widget.classList.remove('collapsed');
         widget.classList.add('loading');
 
@@ -191,7 +190,7 @@ function summarizeSection(section, updateSummary, sectionHeadingFromDOM) {
     if (namespace === "Talk") {
       // Use @Tgrs solution to parse things from the API instead.
       debugger
-      const sectionDataViaAPI = getSectionText(sectionHeadingFromDOM.closest('h2'));
+      const sectionDataViaAPI = getSectionText(sectionHeadingFromDOM);
       sectionContent = "## " + section.title + "\n\n" + sectionDataViaAPI;
     } else {
       sectionContent = "## " + section.title + "\n\n" + section.contentPlain;
