@@ -173,6 +173,8 @@ function getSectionText($heading) {
       }
       sectionText += '\n\n';
     }
+    console.log("sectionText:", sectionText);
+    console.log("data from getSectionText:", data);
     return sectionText;
   });
 }
