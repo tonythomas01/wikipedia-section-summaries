@@ -41,7 +41,7 @@ function formatSection(section) {
     const namespace = mw.config.get("wgCanonicalNamespace");
     if (namespace === "Talk") {
         // We do not store the data.
-        section.contentPlainLength = getPlainTextFromHtml(section.contentHtml).contentPlain.length;
+        section.contentPlainLength = getPlainTextFromHtml(section.contentHtml).length;
     } else {
         section.contentPlain = getPlainTextFromHtml(section.contentHtml);
         section.contentPlainLength = section.contentPlain.length;
