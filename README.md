@@ -36,7 +36,8 @@ mw.loader
 ```
 
 5. Click "Save page" to save your changes.
-6. Refresh your Wikipedia/Wikimedia page, and the Mediawiki Summarizer tool should now be available on supported pages.
+6. Create an OpenAI Key using: [OpenAI API key](https://platform.openai.com/account/api-keys)
+7. Refresh your Wikipedia/Wikimedia page, and the Mediawiki Summarizer tool should now be available on supported pages.
 
 ## Usage
 
