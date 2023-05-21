@@ -2,6 +2,10 @@
 
 This repository contains a small tool that when added to your common.js file on Wikipedia or any other Wikimedia site, it will provide you with a summary of the articles.
 
+![ezgif com-video-to-gif (1)](https://github.com/tonythomas01/wikipedia-section-summaries/assets/4214481/f578db18-b628-4490-b4e9-a7c226854a79)
+
+Demo video: https://www.youtube.com/watch?v=mja1C6FnWes
+
 ## Installation
 
 To install the Mediawiki Summarizer tool, follow the instructions below:
