@@ -53,8 +53,8 @@ function injectSummaryWidgets(sections, minChars = 0) {
         icon: 'robot',
         framed: false,
       });
-      summarizeButton.on('click', function () {
-        const sectionHeadingFromDOM = this.$element.parent().parent().prev('.mw-heading');
+      summarizeButton.on('click', function (event) {
+        const sectionHeadingFromDOM = summarizeButton.$element.parent().parent().prev('.mw-heading');
         widget.classList.remove('collapsed');
         widget.classList.add('loading');
 
