@@ -17,9 +17,9 @@ mw.loader
     .done(function () {
         var version = Date.now();
         $.when(
-          mw.loader.load('https://tonythomas01.github.io/wikipedia-section-summaries/sectionFinder.js', 'text/javascript'),
-          mw.loader.load('https://tonythomas01.github.io/wikipedia-section-summaries/widget.js', 'text/javascript'),
-          mw.loader.load("https://en.summarium.net/mediawiki-summarizer/widget.css?" + version, "text/css")
+          mw.loader.getScript('https://tonythomas01.github.io/wikipedia-section-summaries/sectionFinder.js', 'text/javascript'),
+          mw.loader.getScript('https://tonythomas01.github.io/wikipedia-section-summaries/widget.js', 'text/javascript'),
+          mw.loader.load("https://tonythomas01.github.io/wikipedia-section-summaries/mediawiki-summarizer/widget.css?" + version, "text/css")
         ).then(
             function () {
                 initializeSectionSummarizer();
