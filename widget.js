@@ -84,6 +84,7 @@ function injectSummaryWidgets(sections, minChars = 0) {
     }
   });
 }
+
 var discussionToolsInfo;
 
 function getSectionData($heading) {
@@ -176,8 +177,6 @@ function getSectionText($heading) {
       }
       sectionText += '\n\n';
     }
-    console.log("sectionText:", sectionText);
-    console.log("data from getSectionText:", data);
     return sectionText;
   });
 }
@@ -195,9 +194,10 @@ function summarizeSection(section, updateSummary, sectionHeadingFromDOM) {
     if (namespace === "Talk") {
       // Use @Tgrs solution to parse things from the API instead.
       getSectionText(sectionHeadingFromDOM).then(function (sectionText) {
-        console.log("Found Section Text:", sectionText);
         sectionContent = "## " + section.title + "\n\n" + sectionText;
-        fetchSummaryUsingOpenAi(openAiKey, sectionContent, updateSummary, function (error, summary) {
+        const fixedPromptForChatGPT = "Summarize the following discussion section in less than 100 words. Username is followed by what they" +
+          "wrote. Indentation is used to denote threaded replies. Use the usernames in the summary as well. \n";
+        fetchSummaryUsingOpenAi(fixedPromptForChatGPT, openAiKey, sectionContent, updateSummary, function (error, summary) {
           if (error) {
             reject(error);
           } else {
@@ -207,7 +207,8 @@ function summarizeSection(section, updateSummary, sectionHeadingFromDOM) {
       });
     } else {
       sectionContent = "## " + section.title + "\n\n" + section.contentPlain;
-      fetchSummaryUsingOpenAi(openAiKey, sectionContent, updateSummary, function (error, summary) {
+      const fixedPromptForChatGPT = "Summarize the following section in less than 50 words:  ";
+      fetchSummaryUsingOpenAi(fixedPromptForChatGPT, openAiKey, sectionContent, updateSummary, function (error, summary) {
         if (error) {
           reject(error);
         } else {
@@ -220,8 +221,8 @@ function summarizeSection(section, updateSummary, sectionHeadingFromDOM) {
   });
 }
 
-async function fetchSummaryUsingOpenAi(openAiKey, sectionText, updateSummary, callback) {
-  const prompt = "Summarize the following section after ------------ in 30 words: \n\n------------ \n\n" + sectionText;
+async function fetchSummaryUsingOpenAi(fixedPromptForChatGPT, openAiKey, sectionText, updateSummary, callback) {
+  const prompt = fixedPromptForChatGPT + sectionText;
 
   console.log('prompt', prompt)
 
