@@ -92,11 +92,11 @@ SectionSummarizerSettingsDialog.prototype.getActionProcess = function (action) {
         return new OO.ui.Process(
             function () {
                 localStorage.setItem(
-                    'mw_summarizer_aiEngine',
+                    'openAiKey',
                     this.aiEngineRadioSelect.getSelectedItem().getData()
                 );
                 localStorage.setItem(
-                    'mw_summarizer_apiKey',
+                    'openAiKey',
                     this.apiKeyInput.getValue()
                 );
             },
