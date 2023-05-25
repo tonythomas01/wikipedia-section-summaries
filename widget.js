@@ -239,6 +239,13 @@ async function fetchSummaryUsingOpenAi(fixedPromptForChatGPT, openAiKey, section
         temperature: 0
       }),
     });
+    if (response.status !== 200) {
+      const errorText = await response.text();
+      console.error("Error:", errorText);
+      callback(new Error(`API responded with status ${response.status}: ${errorText}`));
+      return;
+    }
+
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
