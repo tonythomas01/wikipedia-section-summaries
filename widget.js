@@ -203,7 +203,7 @@ function summarizeSection(section, updateSummary, sectionHeadingFromDOM) {
         });
       });
     } else {
-      var sectionContent = "## " + section.title + "\n\n" + section.contentPlain;
+      const sectionContent = "## " + section.title + "\n\n" + section.contentPlain;
       const fixedPromptForChatGPT = "Summarize the following section in less than 50 words:  ";
       fetchSummaryUsingOpenAi(fixedPromptForChatGPT, openAiKey, sectionContent, updateSummary, function (error, summary) {
         if (error) {

@@ -1,16 +1,16 @@
 function getSections() {
+    // We do not require section data scrapped for Talk pages.
+
     const skin = mw.config.get('skin');
     const namespace = mw.config.get('wgCanonicalNamespace');
 
     let sections = [];
-    if (skin === "vector-2022" && namespace === "Talk") {
-        sections = findSectionsInTalkPageVector2022()
+    if (namespace === "Talk") {
+        sections = findSectionInTalkPage()
     } else if (skin === "vector-2022" && namespace === "") {
-        sections = findSectionsInArticlePageVector2022()
-    } else if (skin === "minerva" && namespace === "Talk") {
-        sections = findSectionsInTalkPageMinerva()
+        sections = findSectionsVector2022InArticlePage()
     } else if (skin === "minerva" && namespace === "") {
-        sections = findSectionsInArticlePageMinerva()
+        sections = findSectionsMinervaInArticlePage()
     } else {
         console.error('Section Summarizer does not support this skin or namespace');
         return;
@@ -39,10 +39,7 @@ function getPlainTextFromHtml(html) {
 
 function formatSection(section) {
     const namespace = mw.config.get("wgCanonicalNamespace");
-    if (namespace === "Talk") {
-        // We do not store the data.
-        section.contentPlainLength = getPlainTextFromHtml(section.contentHtml).length;
-    } else {
+    if (namespace !== "Talk") {
         section.contentPlain = getPlainTextFromHtml(section.contentHtml);
         section.contentPlainLength = section.contentPlain.length;
     }
@@ -51,7 +48,7 @@ function formatSection(section) {
 
 
 /* Minerva skin */
-function findSectionsInTalkPageMinerva() {
+function findSectionsMinervaInTalkPage() {
     headingElements = document.querySelectorAll('#mw-content-text > .mw-parser-output > .mw-heading');
     if (headingElements.length === 0) {
         console.error('can not find heading elements');
@@ -85,7 +82,7 @@ function findSectionsInTalkPageMinerva() {
 }
 
 
-function findSectionsInArticlePageMinerva() {
+function findSectionsMinervaInArticlePage() {
     headingElements = document.querySelectorAll('#mw-content-text > .mw-parser-output > h2.section-heading');
     if (headingElements.length === 0) {
         console.error('can not find heading elements');
@@ -119,46 +116,25 @@ function findSectionsInArticlePageMinerva() {
 }
 
 /* Vector 2022 */
-function findSectionsInTalkPageVector2022() {
-    headingElements = document.querySelectorAll('#mw-content-text > .mw-parser-output > .mw-heading');
-    if (headingElements.length === 0) {
-        console.error('can not find heading elements');
-        return null;
-    }
-
+function findSectionInTalkPage() {
     const sections = [];
-    headingElements.forEach(function (headingElement) {
-        const section = {};
-
-        const titleElement = headingElement.querySelector('h2 > .mw-headline');
-        if (!titleElement) {
-            console.error('can not find title element');
+    $('#mw-content-text > .mw-parser-output > .mw-heading').each(function() {
+        const titleElement = $(this).find('h2 > .mw-headline');
+        if (!titleElement.length) {
+            console.error('Cannot find title element');
             return null;
         }
-        section.title = titleElement.textContent;
-
-        section.contentHtml = '';
-        let nextElement = headingElement.nextElementSibling;
-        let firstContentElementFound = false;
-
-        while (nextElement && nextElement.tagName !== 'H2') {
-            if (!firstContentElementFound) {
-                section.firstContentElement = nextElement;
-                firstContentElementFound = true;
-            }
-
-            section.contentHtml += nextElement.outerHTML;
-            nextElement = nextElement.nextElementSibling;
-        }
-
-        sections.push(section);
+        sections.push({
+            contentPlainLength: $(this).nextUntil('.mw-heading').text().length,
+            title: titleElement.text(),
+            firstContentElement: this.nextElementSibling
+        });
     });
 
     return sections;
 }
 
-
-function findSectionsInArticlePageVector2022() {
+function findSectionsVector2022InArticlePage() {
     headingElements = document.querySelectorAll('#mw-content-text > .mw-parser-output > h2');
     if (headingElements.length === 0) {
         console.error('can not find heading elements');
